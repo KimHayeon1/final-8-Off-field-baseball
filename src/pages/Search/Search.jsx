@@ -4,6 +4,7 @@ import UserList from '../../components/common/UserList';
 import TabNav from '../../components/common/TabNav';
 import styled from 'styled-components';
 import { UserContext } from '../../context/UserContext';
+import { get } from '../../api/instanse';
 
 const Search = () => {
   const [searchUsers, setSearchUsers] = useState([]);
@@ -11,7 +12,7 @@ const Search = () => {
   const [userList, setUserList] = useState([]);
   const [keyword, setKeyword] = useState(''); // 검색 키워드
 
-  const { token, accountname } = useContext(UserContext);
+  const { accountname } = useContext(UserContext);
 
   useEffect(() => {
     const titleElement = document.getElementsByTagName('title')[0];
@@ -20,14 +21,8 @@ const Search = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(
-        `https://api.mandarin.weniv.co.kr/user/searchuser/?keyword=${keyword}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const reqPath = `/user/searchuser/?keyword=${keyword}`;
+      const response = await get(reqPath);
       return response.json();
     } catch {}
   };
