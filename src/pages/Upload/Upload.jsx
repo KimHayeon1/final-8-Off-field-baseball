@@ -6,6 +6,7 @@ import Loading from '../../components/common/Loading';
 import ContentsLayout from '../../components/layout/ContentsLayout';
 import { useNavigate, useParams } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
+import { get, post, postForm, put } from '../../api/instanse';
 
 const Upload = () => {
   const { myTeam } = useContext(UserContext);
@@ -15,7 +16,7 @@ const Upload = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState([]);
   const url = 'https://api.mandarin.weniv.co.kr';
-  const token = localStorage.getItem('token');
+
   const navigate = useNavigate();
   const { id } = useParams();
   useEffect(() => {
@@ -26,15 +27,10 @@ const Upload = () => {
 
   const userProfile = async () => {
     try {
-      const req = await fetch(`${url}/user/myinfo`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-type': 'application/json',
-        },
-      });
-      const res = await req.json();
-      setProfile(res.user);
+      const reqPath = '/user/myinfo';
+      const res = await get(reqPath);
+      const json = await res.json();
+      setProfile(json.user);
     } catch (err) {
       console.log(err);
     }
@@ -64,15 +60,12 @@ const Upload = () => {
       for (let i = 0; i < imageFile.length; i++) {
         formData.append('image', imageFile[i]);
       }
-      console.log(formData);
 
-      const req = await fetch(`${url}/image/uploadfiles`, {
-        method: 'POST',
-        body: formData,
-      });
-      const res = await req.json();
-      const fileUrl = res.map((img) => url + '/' + img.filename);
-      console.log(fileUrl);
+      const reqPath = '/image/uploadfiles';
+      const res = await postForm(reqPath, formData);
+      const json = await res.json();
+      const fileUrl = json.map((img) => url + '/' + img.filename);
+
       setImgList([...imgList, ...fileUrl]);
       setIsLoading(false);
     } catch (err) {
@@ -90,15 +83,11 @@ const Upload = () => {
           image: imgList.join(', '),
         },
       };
-      const req = await fetch(`${url}/post`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(postData),
-      });
-      if (req.status === 200) {
+
+      const reqPath = '/post';
+      const res = await post(reqPath, postData);
+
+      if (res.status === 200) {
         navigate('/profile');
       } else {
         throw new Error('업로드 실패');
@@ -129,17 +118,12 @@ const Upload = () => {
 
   const beforeEdit = async () => {
     try {
-      const req = await fetch(`${url}/post/${id}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-type': 'application/json',
-        },
-      });
-      const res = await req.json();
-      console.log(res);
-      setText(res.post.content);
-      setImgList(res.post.image ? res.post.image.split(', ') : []);
+      const reqPath = `/post/${id}`;
+      const res = await get(reqPath);
+      const json = await res.json();
+
+      setText(json.post.content);
+      setImgList(json.post.image ? json.post.image.split(', ') : []);
       setIsValid(true);
     } catch (err) {
       console.log(err);
@@ -155,15 +139,11 @@ const Upload = () => {
           image: imgList.join(', '),
         },
       };
-      const req = await fetch(`${url}/post/${id}`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(postData),
-      });
-      if (req.status === 200) {
+
+      const reqPath = `/post/${id}`;
+      const res = await put(reqPath, postData);
+
+      if (res.status === 200) {
         navigate('/profile');
       } else {
         throw new Error('수정 실패');

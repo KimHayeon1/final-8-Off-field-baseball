@@ -3,6 +3,7 @@ import Button from '../../components/common/Button';
 import ShowPasswordBtn from '../../components/common/ShowPasswordBtn';
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
+import { post } from '../../api/instanse';
 
 const JoinEmail = ({ setPage, email, setEmail, password, setPassword }) => {
   const [isValid, setIsVaild] = useState(false);
@@ -21,23 +22,14 @@ const JoinEmail = ({ setPage, email, setEmail, password, setPassword }) => {
     }
   }, [isValidEmail, isValidPassword]);
   const emailvalid = async () => {
-    const url = 'https://api.mandarin.weniv.co.kr';
     const reqPath = '/user/emailvalid';
-
     const userData = {
       user: {
         email: email,
       },
     };
-    const reqUrl = url + reqPath;
-    const res = await fetch(reqUrl, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
 
+    const res = await post(reqPath, userData);
     const json = await res.json();
 
     if (json.message === '사용 가능한 이메일 입니다.') {

@@ -6,9 +6,10 @@ import ConfirmModal from '../../components/common/Modal/ConfirmModal';
 import MoreModal from '../../components/common/Modal/MoreModal';
 import { useParams } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
+import { post, deleteData } from '../../api/instanse';
 
 const CommentList = ({ comment, setDeletedComment, children }) => {
-  const { token, accountname } = useContext(UserContext);
+  const { accountname } = useContext(UserContext);
 
   const navigate = useNavigate();
   const displayedAt = (createdAt) => {
@@ -37,18 +38,9 @@ const CommentList = ({ comment, setDeletedComment, children }) => {
   };
   const { id } = useParams();
   const reportTriggerFunc = async (e) => {
-    const url = 'https://api.mandarin.weniv.co.kr';
     try {
-      const res = await fetch(
-        `${url}/post/${id}/comments/${comment.id}/report`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const reqPath = `/post/${id}/comments/${comment.id}/report`;
+      const res = await post(reqPath);
       const json = await res.json();
 
       if (json.report) {
@@ -65,13 +57,8 @@ const CommentList = ({ comment, setDeletedComment, children }) => {
   const deleteTriggerFunc = async (e) => {
     const url = 'https://api.mandarin.weniv.co.kr';
     try {
-      const res = await fetch(`${url}/post/${id}/comments/${comment.id}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const reqPath = `/post/${id}/comments/${comment.id}`;
+      const res = await deleteData(reqPath);
       const json = await res.json();
 
       if (json.status === '200') {

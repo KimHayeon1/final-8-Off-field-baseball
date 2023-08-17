@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
+import { post, postForm } from '../../api/instanse';
 
 const JoinProfile = ({ email, password }) => {
   const navigate = useNavigate();
@@ -57,7 +58,6 @@ const JoinProfile = ({ email, password }) => {
     }
   }, [isVaildIntro, isVaildUsername, isVaildAccountname, textCnt]);
 
-  const url = 'https://api.mandarin.weniv.co.kr';
   const join = async () => {
     const reqPath = '/user';
 
@@ -77,11 +77,8 @@ const JoinProfile = ({ email, password }) => {
       const formData = new FormData();
       formData.append('image', image);
       const reqPath = '/image/uploadfile';
-      const reqUrl = url + reqPath;
-      const res = await fetch(reqUrl, {
-        method: 'POST',
-        body: formData,
-      });
+
+      const res = await postForm(reqPath, userData);
       const json = await res.json();
 
       userData.user.image = 'https://api.mandarin.weniv.co.kr/' + json.filename;
@@ -91,15 +88,7 @@ const JoinProfile = ({ email, password }) => {
       userData.user.image = 'https://api.mandarin.weniv.co.kr/' + filename;
     }
 
-    const reqUrl = url + reqPath;
-    const res = await fetch(reqUrl, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
-
+    const res = await post(reqPath, userData);
     const json = await res.json();
 
     if (json.user) {
@@ -114,24 +103,15 @@ const JoinProfile = ({ email, password }) => {
   };
   // 자동로그인
   const login = async () => {
-    const url = 'https://api.mandarin.weniv.co.kr';
     const reqPath = '/user/login';
-
     const loginData = {
       user: {
         email: email,
         password: password,
       },
     };
-    const reqUrl = url + reqPath;
-    const res = await fetch(reqUrl, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify(loginData),
-    });
 
+    const res = await post(reqPath, loginData);
     const json = await res.json();
 
     if (json.user) {
@@ -172,20 +152,15 @@ const JoinProfile = ({ email, password }) => {
   //계정 검증
   const verifyAccount = async () => {
     const reqPath = '/user/accountnamevalid';
-    const reqUrl = url + reqPath;
     const accountData = {
       user: {
         accountname: accountname,
       },
     };
-    const res = await fetch(reqUrl, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify(accountData),
-    });
+
+    const res = await post(reqPath, accountData);
     const json = await res.json();
+
     return json.message;
   };
   // 계정 id 값이 변하면, 유효성 검사

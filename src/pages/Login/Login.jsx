@@ -6,6 +6,7 @@ import ShowPasswordBtn from '../../components/common/ShowPasswordBtn';
 import { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
+import { loginApi, getProfileApi } from '../../api/user';
 
 const Login = ({ team }) => {
   const navigate = useNavigate();
@@ -27,24 +28,14 @@ const Login = ({ team }) => {
   }, [email, password]);
 
   const login = async () => {
-    const url = 'https://api.mandarin.weniv.co.kr';
-    const reqPath = '/user/login';
-
     const loginData = {
       user: {
         email: email,
         password: password,
       },
     };
-    const reqUrl = url + reqPath;
-    const res = await fetch(reqUrl, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify(loginData),
-    });
 
+    const res = await loginApi(loginData);
     const json = await res.json();
 
     if (json.user) {
@@ -68,16 +59,8 @@ const Login = ({ team }) => {
   };
   const getTeam = async (token, accountname) => {
     // 마이팀 불러오기
-    const url = 'https://api.mandarin.weniv.co.kr';
-    const reqPath = `/profile/${accountname}`;
-    const reqUrl = url + reqPath;
-    const res = await fetch(reqUrl, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-type': 'application/json',
-      },
-    });
+    const res = await getProfileApi(accountname);
+
     const teamList = [
       'samsung',
       'hanwha',

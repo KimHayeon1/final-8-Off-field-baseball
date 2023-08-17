@@ -9,6 +9,7 @@ import Loading from '../../components/common/Loading';
 import ContentsLayout from '../../components/layout/ContentsLayout';
 import CommentList from './CommentList';
 import { UserContext } from '../../context/UserContext';
+import { get, post } from '../../api/instanse';
 
 const Detail = () => {
   const [post, setPost] = useState([]);
@@ -53,15 +54,10 @@ const Detail = () => {
 
   const getUserProfile = async () => {
     try {
-      const req = await fetch(`${url}/user/myInfo`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        method: 'GET',
-      });
-      const res = await req.json();
-      setUserImg(res.user.image);
+      const reqPath = '/user/myInfo';
+      const res = await get(reqPath);
+      const json = await res.json();
+      setUserImg(json.user.image);
     } catch (err) {
       console.log(err);
     }
@@ -76,20 +72,14 @@ const Detail = () => {
   const getPostDetail = async () => {
     setIsLoading(true);
     try {
-      const req = await fetch(`${url}/post/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        method: 'GET',
-      });
-
-      const res = await req.json();
+      const reqPath = `/post/${id}`;
+      const res = await get(reqPath);
+      const json = await res.json();
 
       // title 변경
-      setTitle(res.post.author.username);
+      setTitle(json.post.author.username);
 
-      setPost(res.post);
+      setPost(json.post);
       setIsLoading(false);
     } catch (err) {
       console.log(err);
@@ -106,20 +96,14 @@ const Detail = () => {
       },
     };
     try {
-      const req = await fetch(`${url}/post/${id}/comments`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      const reqPath = `/post/${id}/comments`;
+      const res = await post(reqPath, data);
+      const json = await res.json();
 
-      const res = await req.json();
-      setUpdateComment(res);
-      setCommentList([res.comment, ...commentList]);
+      setUpdateComment(json);
+      setCommentList([json.comment, ...commentList]);
       setShowCommentList(
-        [res.comment, ...commentList].slice(0, cntCommentList)
+        [json.comment, ...commentList].slice(0, cntCommentList)
       );
       setIsLoading(false);
       setComment('');
@@ -131,16 +115,12 @@ const Detail = () => {
 
   const getCommentList = async () => {
     try {
-      const req = await fetch(`${url}/post/${id}/comments/?limit=10000`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      const res = await req.json();
-      setCommentList(res.comments);
-      setShowCommentList(res.comments.slice(0, cntCommentList));
+      const reqPath = `/post/${id}/comments/?limit=10000`;
+      const res = await get(reqPath);
+      const json = await res.json();
+
+      setCommentList(json.comments);
+      setShowCommentList(json.comments.slice(0, cntCommentList));
       setCntCommentList(cntCommentList + 10);
     } catch (err) {
       console.log(err);
