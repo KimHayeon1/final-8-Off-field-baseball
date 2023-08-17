@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { IMG_BUTTON, X } from '../../styles/CommonIcons';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Form from '../../components/common/Form';
+import { oneImageApi } from '../../api/image';
+import { productUploadApi, productEditApi, beforeProductEditApi } from '../../api/product';
 
 const ProductUpload = () => {
   const [price, setPrice] = useState('');
@@ -42,13 +44,7 @@ const ProductUpload = () => {
     formData.append('image', imgFile);
 
     try {
-      const resImg = await fetch(
-        'https://api.mandarin.weniv.co.kr/image/uploadfile',
-        {
-          method: 'POST',
-          body: formData,
-        }
-      );
+      const resImg = await oneImageApi(formData);
 
       if (!resImg.ok) {
         throw new Error('Image upload failed');
@@ -91,9 +87,6 @@ const ProductUpload = () => {
 
   // API
   const handleProductUpload = async () => {
-    const url = 'https://api.mandarin.weniv.co.kr';
-    const reqPath = '/product';
-
     const productData = {
       product: {
         itemName: productName,
@@ -103,35 +96,15 @@ const ProductUpload = () => {
       },
     };
 
-    const token = localStorage.getItem('token');
-
     // API 호출
-    const reqUrl = url + reqPath;
-
-    const res = await fetch(reqUrl, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify(productData),
-    });
-
+    const res = await productUploadApi(productData)
     const json = await res.json();
-    console.log(json);
     alert('상품이 등록되었습니다.');
     navigate('/profile');
   };
 
   const handleEdit = async () => {
     try {
-      const url = 'https://api.mandarin.weniv.co.kr';
-      const reqPath = `/product/${id}`;
-
-      const token = localStorage.getItem('token');
-
-      const reqUrl = url + reqPath;
-
       const productData = {
         product: {
           itemName: productName,
@@ -141,14 +114,7 @@ const ProductUpload = () => {
         },
       };
 
-      const res = await fetch(reqUrl, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-type': 'application/json',
-        },
-        body: JSON.stringify(productData),
-      });
+      const res = await productEditApi(id,productData);
       const json = await res.json();
       console.log(json);
       alert('수정되었습니다.');
@@ -160,20 +126,7 @@ const ProductUpload = () => {
 
   const beforeEdit = async () => {
     try {
-      const url = 'https://api.mandarin.weniv.co.kr';
-      const reqPath = `/product/detail/${id}`;
-
-      const token = localStorage.getItem('token');
-
-      const reqUrl = url + reqPath;
-
-      const res = await fetch(reqUrl, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-type': 'application/json',
-        },
-      });
+      const res = await beforeProductEditApi(id);
       const json = await res.json();
       setPrice(json.product.price);
       setImgPre(json.product.itemImage);

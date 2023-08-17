@@ -5,13 +5,11 @@ import TopBasicNav from '../../components/common/TopNavBar/TopBasicNav';
 import Loading from '../../components/common/Loading';
 import ContentsLayout from '../../components/layout/ContentsLayout';
 import Post from '../../components/common/Post';
-
+import { productDetailApi } from '../../api/product';
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const url = 'https://api.mandarin.weniv.co.kr';
-  const token = localStorage.getItem('token');
 
   // title 변경
   const setTitle = (product) => {
@@ -20,16 +18,10 @@ const ProductDetail = () => {
   };
   const getProductDetail = async () => {
     try {
-      const req = await fetch(`${url}/product/detail/${id}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-type': 'application/json',
-        },
-      });
-      const res = await req.json();
-      setTitle(res.product.itemName);
-      setProduct(res.product);
+      const res = await productDetailApi(id);
+      const json = await res.json();
+      setTitle(json.product.itemName);
+      setProduct(json.product);
       setIsLoading(false);
     } catch (err) {
       console.log(err);

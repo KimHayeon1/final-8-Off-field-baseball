@@ -12,6 +12,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 import { UserContext } from '../../../context/UserContext';
 import { SYMBOL_LOGO_GRAY } from '../../../styles/CommonImages';
+import { myPostListApi } from '../../../api/post';
 
 const UserPost = () => {
   const [isList, setIsList] = useState(true);
@@ -26,25 +27,12 @@ const UserPost = () => {
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const url = 'https://api.mandarin.weniv.co.kr';
-
-  const { token, accountname } = useContext(UserContext);
+  const { accountname } = useContext(UserContext);
 
   const getPostList = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(
-        `${url}/post/${
-          username ? username : accountname
-        }/userpost?limit=10&skip=${numPost}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-type': 'application/json',
-          },
-          method: 'GET',
-        }
-      );
+      const res = await myPostListApi(username || accountname, numPost);
       const data = await res.json();
       setPosts(posts.concat(data.post));
       setIsLoading(false);

@@ -10,6 +10,10 @@ import ContentsLayout from '../../components/layout/ContentsLayout';
 import CommentList from './CommentList';
 import { UserContext } from '../../context/UserContext';
 import { get, post } from '../../api/instanse';
+import { commentSubmitApi, getCommentListApi } from '../../api/comment';
+import { getPostApi } from '../../api/post';
+import { getUserInfoApi } from '../../api/user';
+
 
 const Detail = () => {
   const [post, setPost] = useState([]);
@@ -54,8 +58,7 @@ const Detail = () => {
 
   const getUserProfile = async () => {
     try {
-      const reqPath = '/user/myInfo';
-      const res = await get(reqPath);
+      const res = await getUserInfoApi();
       const json = await res.json();
       setUserImg(json.user.image);
     } catch (err) {
@@ -72,8 +75,7 @@ const Detail = () => {
   const getPostDetail = async () => {
     setIsLoading(true);
     try {
-      const reqPath = `/post/${id}`;
-      const res = await get(reqPath);
+      const res = await getPostApi(id);
       const json = await res.json();
 
       // title 변경
@@ -99,7 +101,6 @@ const Detail = () => {
       const reqPath = `/post/${id}/comments`;
       const res = await post(reqPath, data);
       const json = await res.json();
-
       setUpdateComment(json);
       setCommentList([json.comment, ...commentList]);
       setShowCommentList(
@@ -115,8 +116,7 @@ const Detail = () => {
 
   const getCommentList = async () => {
     try {
-      const reqPath = `/post/${id}/comments/?limit=10000`;
-      const res = await get(reqPath);
+      const res = await getCommentListApi(id);
       const json = await res.json();
 
       setCommentList(json.comments);

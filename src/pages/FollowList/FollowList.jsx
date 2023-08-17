@@ -5,12 +5,10 @@ import styled from 'styled-components';
 import TopTitleNav from '../../components/common/TopNavBar/TopTitleNav';
 import { useParams } from 'react-router-dom';
 import Loading from '../../components/common/Loading';
-import { UserContext } from '../../context/UserContext';
+import { followListApi } from '../../api/profile';
 
 const FollowList = () => {
   const { type, accountname } = useParams();
-  const url = 'https://api.mandarin.weniv.co.kr';
-  const { token } = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
   const [followList, setFollowList] = useState([]);
   const [showFollowList, setShowFollowList] = useState([]); // 무한 스크롤
@@ -44,18 +42,10 @@ const FollowList = () => {
   const getFollowList = async () => {
     setIsLoading(true);
     try {
-      const req = await fetch(
-        `${url}/profile/${accountname}/${type}?limit=10000`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-type': 'application/json',
-          },
-        }
-      );
-      const res = await req.json();
-      setFollowList(res);
-      setShowFollowList(res.slice(0, cntFollowList));
+      const res = await followListApi(accountname, type);
+      const json = await res.json();
+      setFollowList(json);
+      setShowFollowList(json.slice(0, cntFollowList));
       setCntFollowList(cntFollowList + 20);
       setIsLoading(false);
     } catch (err) {

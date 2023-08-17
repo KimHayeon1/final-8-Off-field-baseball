@@ -1,33 +1,25 @@
 import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 import { UserContext } from '../../context/UserContext';
+import { heartApi } from '../../api/heart';
 
 const HeartBtn = ({ data }) => {
   const { myTeam } = useContext(UserContext);
   const [hearted, setHearted] = useState('');
   const [heartCount, setHeartCount] = useState('');
-  const url = 'https://api.mandarin.weniv.co.kr';
-  const token = localStorage.getItem('token');
+
   useEffect(() => {
     setHearted(data.hearted);
     setHeartCount(data.heartCount);
   }, [data]);
+
   const handleHeart = async () => {
-    const req = await fetch(
-      `${url}/post/${data.id}/${hearted ? 'unheart' : 'heart'}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-type': 'application/json',
-        },
-        method: hearted ? 'DELETE' : 'POST',
-      }
-    );
-    const res = await req.json();
+    const res = await heartApi(data.id, hearted );
+    const json = await res.json();
     setHearted(!hearted);
-    setHeartCount(res.post.heartCount);
-    console.log(res);
+    setHeartCount(json.post.heartCount);
   };
+  
   return (
     <PostBtn onClick={handleHeart}>
       <svg

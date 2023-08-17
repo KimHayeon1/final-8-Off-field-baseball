@@ -6,7 +6,9 @@ import Loading from '../../components/common/Loading';
 import ContentsLayout from '../../components/layout/ContentsLayout';
 import { useNavigate, useParams } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
-import { get, post, postForm, put } from '../../api/instanse';
+import { uploadFilesApi } from '../../api/image';
+import { getPostApi, postApi, modifyPostApi } from '../../api/post';
+import { myInfoApi } from '../../api/user';
 
 const Upload = () => {
   const { myTeam } = useContext(UserContext);
@@ -27,8 +29,7 @@ const Upload = () => {
 
   const userProfile = async () => {
     try {
-      const reqPath = '/user/myinfo';
-      const res = await get(reqPath);
+      const res = await myInfoApi();
       const json = await res.json();
       setProfile(json.user);
     } catch (err) {
@@ -61,8 +62,7 @@ const Upload = () => {
         formData.append('image', imageFile[i]);
       }
 
-      const reqPath = '/image/uploadfiles';
-      const res = await postForm(reqPath, formData);
+      const res = await uploadFilesApi(formData);
       const json = await res.json();
       const fileUrl = json.map((img) => url + '/' + img.filename);
 
@@ -84,8 +84,7 @@ const Upload = () => {
         },
       };
 
-      const reqPath = '/post';
-      const res = await post(reqPath, postData);
+      const res = await postApi(postData);
 
       if (res.status === 200) {
         navigate('/profile');
@@ -118,8 +117,7 @@ const Upload = () => {
 
   const beforeEdit = async () => {
     try {
-      const reqPath = `/post/${id}`;
-      const res = await get(reqPath);
+      const res = await getPostApi(id);
       const json = await res.json();
 
       setText(json.post.content);
@@ -140,8 +138,7 @@ const Upload = () => {
         },
       };
 
-      const reqPath = `/post/${id}`;
-      const res = await put(reqPath, postData);
+      const res = await modifyPostApi(id, postData);
 
       if (res.status === 200) {
         navigate('/profile');

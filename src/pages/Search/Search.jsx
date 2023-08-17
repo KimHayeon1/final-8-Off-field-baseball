@@ -4,7 +4,7 @@ import UserList from '../../components/common/UserList';
 import TabNav from '../../components/common/TabNav';
 import styled from 'styled-components';
 import { UserContext } from '../../context/UserContext';
-import { get } from '../../api/instanse';
+import { searchApi } from '../../api/search';
 
 const Search = () => {
   const [searchUsers, setSearchUsers] = useState([]);
@@ -21,8 +21,7 @@ const Search = () => {
 
   const fetchData = async () => {
     try {
-      const reqPath = `/user/searchuser/?keyword=${keyword}`;
-      const response = await get(reqPath);
+      const response = await searchApi(keyword);
       return response.json();
     } catch {}
   };

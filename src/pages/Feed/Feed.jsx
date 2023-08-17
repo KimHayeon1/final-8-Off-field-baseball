@@ -10,6 +10,7 @@ import Loading from '../../components/common/Loading';
 import { useInView } from 'react-intersection-observer';
 import { UserContext } from '../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import { followingPostListApi } from '../../api/post';
 
 // 팔로우한 유저의 게시글이 있으면 게시글 리스트
 // 없으면 유저를 검색해 팔로우 해보세요! 문구와 검색하기 버튼
@@ -17,9 +18,7 @@ import { useNavigate } from 'react-router-dom';
 const Feed = () => {
   const [postList, setPostList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  const url = 'https://api.mandarin.weniv.co.kr';
-  const { token, myTeam } = useContext(UserContext);
+  const { myTeam } = useContext(UserContext);
 
   const [numPost, setNumPost] = useState(0);
   const [done, setDone] = useState(false);
@@ -35,16 +34,10 @@ const Feed = () => {
   const getFeed = useCallback(async () => {
     setLoading(true);
     try {
-      const req = await fetch(`${url}/post/feed/?limit=10&skip=${numPost}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-type': 'application/json',
-        },
-        method: 'GET',
-      });
-      const res = await req.json();
-      setPostList(postList.concat(res.posts));
-      if (res.posts.length < 10) setDone(true);
+      const res = await followingPostListApi(numPost)
+      const json = await res.json();
+      setPostList(postList.concat(json.posts));
+      if (json.posts.length < 10) setDone(true);
       setIsLoading(false);
       setLoading(false);
     } catch (err) {

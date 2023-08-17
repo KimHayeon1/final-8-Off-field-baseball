@@ -1,20 +1,11 @@
 import ConfirmModal from './ConfirmModal';
+import { reportPostApi } from '../../../api/post';
 
 const ReportModal = ({ closeModal, id, setIsModalOpen }) => {
-  const url = 'https://api.mandarin.weniv.co.kr';
-  const token = localStorage.getItem('token');
-
   const reportPost = async () => {
     try {
-      const req = await fetch(`${url}/post/${id}/report`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-type': 'application/json',
-        },
-      });
-      const res = await req.json();
-      console.log(res);
+      const res = await reportPostApi(id)
+      const json = await res.json();
       closeModal(false);
       alert('신고가 완료되었습니다.');
       setIsModalOpen(false);

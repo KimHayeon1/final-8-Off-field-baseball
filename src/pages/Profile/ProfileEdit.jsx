@@ -10,6 +10,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { UserContext } from '../../context/UserContext';
 
+import { oneImageApi } from '../../api/image';
+import { modifyProfileApi, accountnameApi, getUserInfoApi } from '../../api/user';
+
 const EditProfile = () => {
   const { accountname, setAccountname, setMyTeam, token, myTeam } =
     useContext(UserContext);
@@ -72,16 +75,10 @@ const EditProfile = () => {
         const formData = new FormData();
         formData.append('image', image);
 
-        const reqPath = '/image/uploadfile';
-        const reqUrl = url + reqPath;
-
-        const res = await fetch(reqUrl, {
-          method: 'POST',
-          body: formData,
-        });
+        const res = await oneImageApi(formData,);
 
         const json = await res.json();
-        return 'https://api.mandarin.weniv.co.kr/' + json.filename;
+        return url + '/' + json.filename;
       } else {
         // 기존 프로필 이미지
         return src;
@@ -96,10 +93,6 @@ const EditProfile = () => {
   const handleEdit = async () => {
     try {
       const profileImageUrl = await uploadProfileImage();
-      const url = 'https://api.mandarin.weniv.co.kr';
-      const reqPath = '/user';
-
-      const reqUrl = url + reqPath;
 
       const userData = {
         user: {
@@ -116,15 +109,7 @@ const EditProfile = () => {
         userData.user.intro = intro;
       }
 
-      const res = await fetch(reqUrl, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
-
+      const res = await modifyProfileApi(userData);
       const json = await res.json();
 
       alert('수정되었습니다.');
@@ -147,7 +132,6 @@ const EditProfile = () => {
 
   const handleForm = (e) => {
     e.preventDefault();
-    console.log(src);
     handleEdit();
   };
 
@@ -167,20 +151,12 @@ const EditProfile = () => {
 
   //계정 검증
   const verifyAccount = async () => {
-    const reqPath = '/user/accountnamevalid';
-    const reqUrl = url + reqPath;
     const accountData = {
       user: {
         accountname: accountnameValue,
       },
     };
-    const res = await fetch(reqUrl, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify(accountData),
-    });
+    const res = await accountnameApi(accountData)
     const json = await res.json();
     return json.message;
   };
@@ -231,19 +207,14 @@ const EditProfile = () => {
 
   const beforeEdit = async () => {
     try {
-      const req = await fetch(`${url}/user/myinfo`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const res = await req.json();
-      setIntro(res.user.intro?.split('$')[0]); // intro 있을 경우. 잘라서
-      setSrc(res.user.image); // 이미지
+      const res = await getUserInfoApi();
+      const json = await res.json();
+      setIntro(json.user.intro?.split('$')[0]); // intro 있을 경우. 잘라서
+      setSrc(json.user.image); // 이미지
 
       // intro 있을 경우
-      if (res.user.intro) {
-        const intro = res.user.intro.split('$')[0];
+      if (json.user.intro) {
+        const intro = json.user.intro.split('$')[0];
         setIntro(intro);
         setTextCnt(intro.length);
       }
@@ -256,7 +227,7 @@ const EditProfile = () => {
         setSelectedOpt(Object.keys(teamName)[teamIndex]);
       }
 
-      setUsername(res.user.username);
+      setUsername(json.user.username);
     } catch (err) {
       console.log(err);
     }

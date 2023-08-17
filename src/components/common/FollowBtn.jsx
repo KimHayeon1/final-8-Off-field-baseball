@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Button from './Button';
 import { UserContext } from '../../context/UserContext';
+import { followApi } from '../../api/user';
 
 const FollowBtn = ({ profileData, targetuser, ...props }) => {
   const { myTeam } = useContext(UserContext);
   const [isFollowing, setIsFollowing] = useState(props.isfollow);
-  const url = 'https://api.mandarin.weniv.co.kr';
-  const token = localStorage.getItem('token');
   const accountname = localStorage.getItem('accountname');
+
   useEffect(() => {
     if (props.isfollow) {
       return setIsFollowing(props.isfollow);
@@ -16,23 +16,15 @@ const FollowBtn = ({ profileData, targetuser, ...props }) => {
 
   const handleFollow = async () => {
     try {
-      const req = await fetch(
-        `${url}/profile/${targetuser}/${isFollowing ? 'unfollow' : 'follow'}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-type': 'application/json',
-          },
-          method: isFollowing ? 'DELETE' : 'POST',
-        }
-      );
-      const profile = await req.json();
+      const res = await followApi(targetuser,isFollowing);
+      const profile = await res.json();
       console.log(profile);
       setIsFollowing(!isFollowing);
     } catch (err) {
       console.log(err);
     }
   };
+  
   return (
     <>
       {accountname === targetuser ? null : (

@@ -8,6 +8,7 @@ import TabNav from '../../components/common/TabNav';
 import Loading from '../../components/common/Loading';
 import { UserContext } from '../../context/UserContext';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { profileApi } from '../../api/profile';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -18,8 +19,7 @@ const Profile = () => {
   const [team, setTeam] = useState('');
   const [intro, setIntro] = useState('');
 
-  const url = 'https://api.mandarin.weniv.co.kr';
-  const { token, accountname } = useContext(UserContext);
+  const { accountname } = useContext(UserContext);
 
   // title 변경
   const setTitle = (username, accountname) => {
@@ -30,17 +30,7 @@ const Profile = () => {
   const getProfileInfo = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(
-        `${url}/profile/${username ? username : accountname}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-type': 'application/json',
-          },
-          method: 'GET',
-        }
-      );
-
+      const res = await profileApi(username || accountname);
       const data = await res.json();
 
       const profile = data.profile;

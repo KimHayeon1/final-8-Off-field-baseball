@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { UserContext } from '../../../context/UserContext';
+import { productListApi } from '../../../api/product';
 
 const UserProduct = ({ accountname }) => {
   const [productList, setProductList] = useState([]);
@@ -10,13 +11,7 @@ const UserProduct = ({ accountname }) => {
 
   const getProductList = async () => {
     try {
-      const req = await fetch(`${url}/product/${accountname}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-type': 'application/json',
-        },
-      });
+      const req = await productListApi(accountname);
       const res = await req.json();
       setProductList(res.product);
     } catch (err) {

@@ -6,7 +6,7 @@ import ConfirmModal from '../../components/common/Modal/ConfirmModal';
 import MoreModal from '../../components/common/Modal/MoreModal';
 import { useParams } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
-import { post, deleteData } from '../../api/instanse';
+import { commentReportApi, commentDeleteApi } from '../../api/comment';
 
 const CommentList = ({ comment, setDeletedComment, children }) => {
   const { accountname } = useContext(UserContext);
@@ -33,14 +33,13 @@ const CommentList = ({ comment, setDeletedComment, children }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const handleMoreBtn = (e) => {
+  const handleMoreBtn = () => {
     setIsModalOpen(true);
   };
   const { id } = useParams();
   const reportTriggerFunc = async (e) => {
     try {
-      const reqPath = `/post/${id}/comments/${comment.id}/report`;
-      const res = await post(reqPath);
+      const res = await commentReportApi(id, comment.id);
       const json = await res.json();
 
       if (json.report) {
@@ -55,16 +54,13 @@ const CommentList = ({ comment, setDeletedComment, children }) => {
     }
   };
   const deleteTriggerFunc = async (e) => {
-    const url = 'https://api.mandarin.weniv.co.kr';
     try {
-      const reqPath = `/post/${id}/comments/${comment.id}`;
-      const res = await deleteData(reqPath);
+      const res = await commentDeleteApi(id, comment.id);
       const json = await res.json();
 
       if (json.status === '200') {
         alert('삭제되었습니다');
         setIsDeleteModalOpen(false);
-        console.log(json);
         setDeletedComment(comment.id); // 임시 값
       } else {
         throw new Error('삭제에 실패했습니다');

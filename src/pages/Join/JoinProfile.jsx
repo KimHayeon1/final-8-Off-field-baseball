@@ -7,7 +7,8 @@ import styled from 'styled-components';
 import { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context/UserContext';
-import { post, postForm } from '../../api/instanse';
+import { joinApi, loginApi, accountnameApi } from '../../api/user';
+import { oneImageApi } from '../../api/image';
 
 const JoinProfile = ({ email, password }) => {
   const navigate = useNavigate();
@@ -59,8 +60,6 @@ const JoinProfile = ({ email, password }) => {
   }, [isVaildIntro, isVaildUsername, isVaildAccountname, textCnt]);
 
   const join = async () => {
-    const reqPath = '/user';
-
     const userData = {
       user: {
         username: username,
@@ -76,9 +75,8 @@ const JoinProfile = ({ email, password }) => {
     if (src !== BASIC_PROFILE_LG) {
       const formData = new FormData();
       formData.append('image', image);
-      const reqPath = '/image/uploadfile';
 
-      const res = await postForm(reqPath, userData);
+      const res = await oneImageApi(formData);
       const json = await res.json();
 
       userData.user.image = 'https://api.mandarin.weniv.co.kr/' + json.filename;
@@ -88,7 +86,7 @@ const JoinProfile = ({ email, password }) => {
       userData.user.image = 'https://api.mandarin.weniv.co.kr/' + filename;
     }
 
-    const res = await post(reqPath, userData);
+    const res = await joinApi(userData);
     const json = await res.json();
 
     if (json.user) {
@@ -103,15 +101,13 @@ const JoinProfile = ({ email, password }) => {
   };
   // 자동로그인
   const login = async () => {
-    const reqPath = '/user/login';
     const loginData = {
       user: {
         email: email,
         password: password,
       },
     };
-
-    const res = await post(reqPath, loginData);
+    const res = await loginApi(loginData);
     const json = await res.json();
 
     if (json.user) {
@@ -151,14 +147,13 @@ const JoinProfile = ({ email, password }) => {
 
   //계정 검증
   const verifyAccount = async () => {
-    const reqPath = '/user/accountnamevalid';
     const accountData = {
       user: {
         accountname: accountname,
       },
     };
 
-    const res = await post(reqPath, accountData);
+    const res = await accountnameApi(accountData);
     const json = await res.json();
 
     return json.message;
