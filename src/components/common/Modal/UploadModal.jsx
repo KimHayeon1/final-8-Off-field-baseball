@@ -1,10 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { useRef, useContext } from 'react';
-import { UserContext } from '../../../context/UserContext';
+import { useSelector } from 'react-redux';
 
 const UploadModal = ({ setIsModalOpen, children }) => {
-  const { myTeam } = useContext(UserContext);
+  const myTeam = useSelector((state) => state.authReducer.user.myTeam);
   const modal = useRef(null);
   useEffect(() => {
     if (modal) {

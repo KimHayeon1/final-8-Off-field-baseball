@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import {
   POST_ALBUM_OFF,
@@ -10,9 +10,9 @@ import {
 import Post from '../../../components/common/Post';
 import { Link, useParams } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
-import { UserContext } from '../../../context/UserContext';
 import { SYMBOL_LOGO_GRAY } from '../../../styles/CommonImages';
 import { myPostListApi } from '../../../api/post';
+import { useSelector } from 'react-redux';
 
 const UserPost = () => {
   const [isList, setIsList] = useState(true);
@@ -27,7 +27,9 @@ const UserPost = () => {
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { accountname } = useContext(UserContext);
+  const accountname = useSelector(
+    (state) => state.authReducer.user.accountname
+  );
 
   const getPostList = useCallback(async () => {
     setLoading(true);

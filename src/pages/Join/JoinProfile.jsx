@@ -4,11 +4,11 @@ import Form from '../../components/common/Form';
 import Button from '../../components/common/Button';
 import UploadModal from '../../components/common/Modal/UploadModal';
 import styled from 'styled-components';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../context/UserContext';
 import { joinApi, loginApi, accountnameApi } from '../../api/user';
 import { oneImageApi } from '../../api/image';
+import { useDispatch } from 'react-redux';
 
 const JoinProfile = ({ email, password }) => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const JoinProfile = ({ email, password }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [textCnt, setTextCnt] = useState(0);
 
-  const { setAccountname, setMyTeam, setToken } = useContext(UserContext);
+  const dispatch = useDispatch();
 
   // 소개는 필수값이 아니어서, 입력값이 없는 처음엔 true
   const [isVaildIntro, setIsVaildIntro] = useState(true);
@@ -113,18 +113,18 @@ const JoinProfile = ({ email, password }) => {
     if (json.user) {
       const token = json.user['token'];
       const accountname = json.user['accountname'];
+      let myTeam = null;
+
       if (!selectedOpt || selectedOpt === '없음') {
         localStorage.setItem('myteam', '');
-        setMyTeam('');
       } else {
-        const team = teamData[selectedOpt].team;
+        myTeam = teamData[selectedOpt].team;
         localStorage.setItem('myteam', teamData[selectedOpt].team);
-        setMyTeam(team);
       }
       localStorage.setItem('token', token);
       localStorage.setItem('accountname', accountname);
-      setAccountname(accountname);
-      setToken(token);
+
+      dispatch(login({ token, accountname, myTeam }));
       navigate('/'); // 자동로그인에 성공하면 홈화면으로
     } else {
       navigate('/user/login'); // 자동로그인에 실패하면 로그인화면으로

@@ -1,7 +1,5 @@
 import AuthRoute from './AuthRoute';
 import NonAuthRoute from './NonAuthRoute';
-import { useContext } from 'react';
-import { UserContext } from '../context/UserContext';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from '../pages/Login/Login';
@@ -22,9 +20,11 @@ import Detail from '../pages/Upload/Detail';
 import SplashScreen from '../pages/SplashScreen/SplashScreen';
 import SplashLogin from '../pages/Login/SplashLogin';
 import ProductDetail from '../pages/Product/ProductDetail';
+import { useSelector } from 'react-redux';
 
 export default function Router() {
-  const { token } = useContext(UserContext);
+  const user = useSelector((state) => state.authReducer.user);
+
   return (
     <BrowserRouter>
       <Routes>
@@ -32,13 +32,13 @@ export default function Router() {
         <Route path='/error404' element={<Error404 />} />
         <Route path='/' element={<SplashScreen />} />
 
-        <Route element={<NonAuthRoute authenticated={token} />}>
+        <Route element={<NonAuthRoute authenticated={user} />}>
           <Route path='/login' element={<SplashLogin />} />
           <Route path='/login/email' element={<Login />} />
           <Route path='/join' element={<Join />} />
         </Route>
 
-        <Route element={<AuthRoute authenticated={token} />}>
+        <Route element={<AuthRoute authenticated={user} />}>
           <Route path='/home' element={<Feed />} />
           <Route path='/post/upload' element={<Upload />} />
           <Route path='/post/:id' element={<Detail />} />

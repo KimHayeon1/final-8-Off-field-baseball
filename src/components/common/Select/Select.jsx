@@ -1,8 +1,8 @@
 import { useRef } from 'react';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { UserContext } from '../../../context/UserContext';
 import { OPEN } from '../../../styles/CommonIcons';
+import { useSelector } from 'react-redux';
 
 // btnId : label for과 연결
 const Select = ({
@@ -13,7 +13,7 @@ const Select = ({
   setSelectedOpt,
   selectedTeam,
 }) => {
-  const { myTeam } = useContext(UserContext);
+  const myTeam = useSelector((state) => state.authReducer.user.myTeam);
   const [isOn, setIsOn] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [FocusOptIndex, setFocusOptIndex] = useState(null);

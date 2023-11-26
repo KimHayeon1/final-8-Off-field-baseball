@@ -1,21 +1,20 @@
 import MoreModal from './MoreModal';
 import { useNavigate } from 'react-router-dom';
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import ConfirmModal from './ConfirmModal';
-import { UserContext } from '../../../context/UserContext';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../../modules/authReducer';
 
 const SettingModal = ({ isModalOpen, setIsModalOpen }) => {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleLogoutbtn = () => {
     navigate('/');
     localStorage.clear();
-    setMyTeam(null);
-    setToken(null);
-    setAccountname(null);
+    dispatch(logout());
   };
 
-  const { setMyTeam, setToken, setAccountname } = useContext(UserContext);
   return (
     <>
       <MoreModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}>

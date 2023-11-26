@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import TopBasicNav from '../../components/common/TopNavBar/TopBasicNav';
 import Comment from '../../components/common/Comment';
@@ -8,12 +8,9 @@ import { useEffect } from 'react';
 import Loading from '../../components/common/Loading';
 import ContentsLayout from '../../components/layout/ContentsLayout';
 import CommentList from './CommentList';
-import { UserContext } from '../../context/UserContext';
-import { get, post } from '../../api/instanse';
-import { commentSubmitApi, getCommentListApi } from '../../api/comment';
+import { getCommentListApi } from '../../api/comment';
 import { getPostApi } from '../../api/post';
 import { getUserInfoApi } from '../../api/user';
-
 
 const Detail = () => {
   const [post, setPost] = useState([]);
@@ -22,8 +19,6 @@ const Detail = () => {
   // 댓글 달면 바로 업데이트 되도록 하는 state (더 좋은 방법이 있을지 고민 중)
   const [updateComment, setUpdateComment] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const url = 'https://api.mandarin.weniv.co.kr';
-  const { token } = useContext(UserContext);
   const [userImg, setUserImg] = useState('');
   let { id } = useParams();
   const [showCommentList, setShowCommentList] = useState('');

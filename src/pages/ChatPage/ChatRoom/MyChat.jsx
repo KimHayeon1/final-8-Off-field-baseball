@@ -1,13 +1,14 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
-import { UserContext } from '../../../context/UserContext';
+import { useSelector } from 'react-redux';
 
 const MyChat = (props) => {
   useEffect(() => {
     const titleElement = document.getElementsByTagName('title')[0];
     titleElement.innerHTML = '채팅룸 | 구장 밖 야구';
   }, []);
-  const { myTeam } = useContext(UserContext);
+  const myTeam = useSelector((state) => state.authReducer.user.myTeam);
+
   return (
     <Wrapper>
       <MessageTime>{props.time}</MessageTime>

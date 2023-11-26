@@ -3,20 +3,21 @@ import Form from '../../components/common/Form';
 import styled from 'styled-components';
 import Button from '../../components/common/Button';
 import ShowPasswordBtn from '../../components/common/ShowPasswordBtn';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../context/UserContext';
 import { loginApi, getProfileApi } from '../../api/user';
+import { useDispatch } from 'react-redux';
 
 const Login = ({ team }) => {
   const navigate = useNavigate();
-  const { setToken, setAccountname, setMyTeam } = useContext(UserContext);
 
   const [isValid, setIsVaild] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [warningMessage, setWarningMessage] = useState('');
+
+  const dispatch = useDispatch();
 
   // 이메일, 비밀번호 모두 입력되면 버튼 활성화
   useEffect(() => {
@@ -41,17 +42,13 @@ const Login = ({ team }) => {
     if (json.user) {
       const token = json.user['token'];
       const accountname = json.user['accountname'];
+      const myTeam = await getTeam(json.user['token'], json.user.accountname);
 
       localStorage.setItem('token', token);
       localStorage.setItem('accountname', accountname);
-
-      setToken(token);
-      setAccountname(accountname);
-
-      // 마이팀 저장
-      const team = await getTeam(json.user['token'], json.user.accountname);
       localStorage.setItem('myteam', team);
-      setMyTeam(team);
+
+      dispatch(login({ token, accountname, myTeam }));
       goHome();
     } else {
       setWarningMessage(json.message);

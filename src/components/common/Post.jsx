@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import {
   MESSAGE_CIRCLE_SM,
   MORE_VERTICAL_LIGHT,
@@ -12,7 +12,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper';
 import 'swiper/css/pagination';
 import 'swiper/css';
-import { UserContext } from '../../context/UserContext';
+import { useSelector } from 'react-redux';
 
 const Post = ({
   loc,
@@ -26,7 +26,9 @@ const Post = ({
   const { id } = useParams();
   const [postId, setPostId] = useState('');
   const [author, setAuthor] = useState('');
-  const { accountname, myTeam } = useContext(UserContext);
+  const { accountname, myTeam } = useSelector(
+    (state) => state.authReducer.user
+  );
 
   useEffect(() => {
     if (post) {
