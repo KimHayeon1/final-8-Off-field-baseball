@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import Button from './Button';
-import { UserContext } from '../../context/UserContext';
 import { followApi } from '../../api/user';
+import { useSelector } from 'react-redux';
 
 const FollowBtn = ({ profileData, targetuser, ...props }) => {
-  const { myTeam } = useContext(UserContext);
+  const myTeam = useSelector((state) => state.authReducer.user.myTeam);
   const [isFollowing, setIsFollowing] = useState(props.isfollow);
   const accountname = localStorage.getItem('accountname');
 
@@ -16,7 +16,7 @@ const FollowBtn = ({ profileData, targetuser, ...props }) => {
 
   const handleFollow = async () => {
     try {
-      const res = await followApi(targetuser,isFollowing);
+      const res = await followApi(targetuser, isFollowing);
       const profile = await res.json();
       console.log(profile);
       setIsFollowing(!isFollowing);
@@ -24,7 +24,7 @@ const FollowBtn = ({ profileData, targetuser, ...props }) => {
       console.log(err);
     }
   };
-  
+
   return (
     <>
       {accountname === targetuser ? null : (

@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import Overlay from './Overlay';
 import styled from 'styled-components';
-import { useRef, useContext } from 'react';
-import { UserContext } from '../../../context/UserContext';
+import { useRef } from 'react';
+import { useSelector } from 'react-redux';
 
 const MoreModal = ({ isModalOpen, setIsModalOpen, children }) => {
-  const { myTeam } = useContext(UserContext);
+  const myTeam = useSelector((state) => state.authReducer.user.myTeam);
+
   // tab을 누르면, 모달 안에서만 포커스 되게
   const handleKeyDown = (e) => {
     if (!e.shiftKey && e.key === 'Tab') {

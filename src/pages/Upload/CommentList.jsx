@@ -1,15 +1,17 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { MORE_VERTICAL_LIGHT } from '../../styles/CommonIcons';
 import ConfirmModal from '../../components/common/Modal/ConfirmModal';
 import MoreModal from '../../components/common/Modal/MoreModal';
 import { useParams } from 'react-router-dom';
-import { UserContext } from '../../context/UserContext';
 import { commentReportApi, commentDeleteApi } from '../../api/comment';
+import { useSelector } from 'react-redux';
 
 const CommentList = ({ comment, setDeletedComment, children }) => {
-  const { accountname } = useContext(UserContext);
+  const accountname = useSelector(
+    (state) => state.authReducer.user.accountname
+  );
 
   const navigate = useNavigate();
   const displayedAt = (createdAt) => {

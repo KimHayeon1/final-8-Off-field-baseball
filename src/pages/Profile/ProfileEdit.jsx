@@ -5,17 +5,23 @@ import Form from '../../components/common/Form';
 import TopUploadNav from '../../components/common/TopNavBar/TopUploadNav';
 import UploadModal from '../../components/common/Modal/UploadModal';
 
-import { useEffect, useState, useContext, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { UserContext } from '../../context/UserContext';
-
 import { oneImageApi } from '../../api/image';
-import { modifyProfileApi, accountnameApi, getUserInfoApi } from '../../api/user';
+import {
+  modifyProfileApi,
+  accountnameApi,
+  getUserInfoApi,
+} from '../../api/user';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { editProfile } from '../../modules/authReducer';
 
 const EditProfile = () => {
-  const { accountname, setAccountname, setMyTeam, token, myTeam } =
-    useContext(UserContext);
+  const { accountname, myTeam } = useSelector(
+    (state) => state.authReducer.user
+  );
 
   const [isValid, setIsVaild] = useState(true);
   const [username, setUsername] = useState('');
@@ -35,6 +41,9 @@ const EditProfile = () => {
   const [isVaildUsername, setIsVaildUsername] = useState(true);
   const [isVaildAccountname, setIsVaildAccountname] = useState(true);
   const [selectedTeam, setSelectedTeam] = useState(myTeam);
+
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const titleElement = document.getElementsByTagName('title')[0];
     titleElement.innerHTML = '프로필 수정 | 구장 밖 야구';
@@ -75,7 +84,7 @@ const EditProfile = () => {
         const formData = new FormData();
         formData.append('image', image);
 
-        const res = await oneImageApi(formData,);
+        const res = await oneImageApi(formData);
 
         const json = await res.json();
         return url + '/' + json.filename;
@@ -113,18 +122,20 @@ const EditProfile = () => {
       const json = await res.json();
 
       alert('수정되었습니다.');
-      localStorage.setItem('accountname', json.user.accountname);
-      setAccountname(json.user.accountname);
       navigate('/profile');
+      localStorage.setItem('accountname', json.user.accountname);
+
+      let changedTeam = null;
 
       if (selectedOpt && selectedOpt !== '없음') {
         localStorage.setItem('myteam', teamName[selectedOpt].team);
-        setMyTeam(teamName[selectedOpt].team);
+        changedTeam = teamName[selectedOpt].team;
       } else {
         // 팀 미선택 시
         localStorage.setItem('myteam', '');
-        setMyTeam('');
       }
+
+      dispatch(editProfile(json.user.accountname, changedTeam));
     } catch (err) {
       console.log(err);
     }
@@ -156,7 +167,7 @@ const EditProfile = () => {
         accountname: accountnameValue,
       },
     };
-    const res = await accountnameApi(accountData)
+    const res = await accountnameApi(accountData);
     const json = await res.json();
     return json.message;
   };

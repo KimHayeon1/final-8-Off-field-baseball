@@ -1,13 +1,12 @@
-import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { UserContext } from '../../context/UserContext';
+import { useSelector } from 'react-redux';
 
 import { EDIT } from '../../styles/CommonIcons';
 
 const TabNav = ({ currentId }) => {
   const navigate = useNavigate();
-  const { myTeam } = useContext(UserContext);
+  const myTeam = useSelector((state) => state.authReducer.user.myTeam);
 
   const tabList = [
     {

@@ -1,10 +1,10 @@
-import React, { useContext, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { UserContext } from '../../../context/UserContext';
 import Overlay from './Overlay';
+import { useSelector } from 'react-redux';
 
 const ConfirmModal = ({ title, trigger, triggerFunc, closeModal }) => {
-  const { myTeam } = useContext(UserContext);
+  const myTeam = useSelector((state) => state.authReducer.user.myTeam);
 
   // tab을 누르면, 모달 안에서만 포커스 되게
   const handleKeyDown = (e) => {

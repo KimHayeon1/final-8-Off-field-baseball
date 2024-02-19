@@ -1,17 +1,17 @@
 import { BASIC_PROFILE_LG, X } from '../../styles/CommonIcons';
 import styled from 'styled-components';
 import TopUploadNav from '../../components/common/TopNavBar/TopUploadNav';
-import { useEffect, useState, useContext, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Loading from '../../components/common/Loading';
 import ContentsLayout from '../../components/layout/ContentsLayout';
 import { useNavigate, useParams } from 'react-router-dom';
-import { UserContext } from '../../context/UserContext';
 import { uploadFilesApi } from '../../api/image';
 import { getPostApi, postApi, modifyPostApi } from '../../api/post';
 import { myInfoApi } from '../../api/user';
+import { useSelector } from 'react-redux';
 
 const Upload = () => {
-  const { myTeam } = useContext(UserContext);
+  const myTeam = useSelector((state) => state.authReducer.user.myTeam);
   const [imgList, setImgList] = useState([]);
   const [isValid, setIsValid] = useState(false);
   const [text, setText] = useState('');

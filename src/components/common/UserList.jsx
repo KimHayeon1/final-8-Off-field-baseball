@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { UserContext } from '../../context/UserContext';
 import {
   LANDERS,
   GIANTS,
@@ -15,10 +14,11 @@ import {
   HEROES,
 } from '../../styles/CommonImages';
 import FollowBtn from './FollowBtn';
+import { useSelector } from 'react-redux';
 
 const UserList = ({ user, keyword }) => {
   const [myTeamImg, setMyTeamImg] = useState('');
-  const { myTeam } = useContext(UserContext);
+  const myTeam = useSelector((state) => state.authReducer.user.myTeam);
 
   const myTeamList = [
     { id: '1', name: '두산 베어스', name2: 'doosan', img: BEARS },

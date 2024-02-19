@@ -1,18 +1,19 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import TopSearchNav from '../../components/common/TopNavBar/TopSearchNav';
 import UserList from '../../components/common/UserList';
 import TabNav from '../../components/common/TabNav';
 import styled from 'styled-components';
-import { UserContext } from '../../context/UserContext';
 import { searchApi } from '../../api/search';
+import { useSelector } from 'react-redux';
 
 const Search = () => {
   const [searchUsers, setSearchUsers] = useState([]);
   const [cntUserList, setCntUserList] = useState(20);
   const [userList, setUserList] = useState([]);
   const [keyword, setKeyword] = useState(''); // 검색 키워드
-
-  const { accountname } = useContext(UserContext);
+  const accountname = useSelector(
+    (state) => state.authReducer.user.accountname
+  );
 
   useEffect(() => {
     const titleElement = document.getElementsByTagName('title')[0];

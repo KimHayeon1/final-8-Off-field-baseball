@@ -1,15 +1,15 @@
-import React, { useContext } from 'react';
 import styled from 'styled-components';
 
 import { TopNavBar, LeftArrow } from './Styled';
 import { ARROW_LEFT } from '../../../styles/CommonIcons';
 import Button from '../Button';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../../context/UserContext';
+import { useSelector } from 'react-redux';
 
 const TopUploadNav = ({ btnTxt, isValid, event, selectedTeam }) => {
   const navigate = useNavigate();
-  const { myTeam } = useContext(UserContext);
+  const myTeam = useSelector((state) => state.authReducer.user.myTeam);
+
   return (
     <>
       <ExtendTopUploadNav>

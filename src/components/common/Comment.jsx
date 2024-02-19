@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useState, useContext } from 'react';
-import { UserContext } from '../../context/UserContext';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const Comment = ({ placeholder, txt, value, setValue, event, children }) => {
-  const { myTeam } = useContext(UserContext);
+  const myTeam = useSelector((state) => state.authReducer.user.myTeam);
   const [isValid, setIsValid] = useState(false);
   // input에 입력된 텍스트를 담는다
 

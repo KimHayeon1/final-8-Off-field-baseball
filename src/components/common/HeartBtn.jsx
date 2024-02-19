@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { UserContext } from '../../context/UserContext';
 import { heartApi } from '../../api/heart';
+import { useSelector } from 'react-redux';
 
 const HeartBtn = ({ data }) => {
-  const { myTeam } = useContext(UserContext);
   const [hearted, setHearted] = useState('');
   const [heartCount, setHeartCount] = useState('');
+  const myTeam = useSelector((state) => state.authReducer.user.myTeam);
 
   useEffect(() => {
     setHearted(data.hearted);
@@ -14,12 +14,12 @@ const HeartBtn = ({ data }) => {
   }, [data]);
 
   const handleHeart = async () => {
-    const res = await heartApi(data.id, hearted );
+    const res = await heartApi(data.id, hearted);
     const json = await res.json();
     setHearted(!hearted);
     setHeartCount(json.post.heartCount);
   };
-  
+
   return (
     <PostBtn onClick={handleHeart}>
       <svg

@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
 import styled from 'styled-components';
-import { UserContext } from '../../../context/UserContext';
+import { useSelector } from 'react-redux';
 
 const UserChat = (props) => {
-  const { myTeam } = useContext(UserContext);
+  const myTeam = useSelector((state) => state.authReducer.user.myTeam);
+
   return (
     <Wrapper>
       <img

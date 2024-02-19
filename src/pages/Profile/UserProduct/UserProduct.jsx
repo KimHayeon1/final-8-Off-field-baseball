@@ -1,13 +1,12 @@
-import React, { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { UserContext } from '../../../context/UserContext';
 import { productListApi } from '../../../api/product';
+import { useSelector } from 'react-redux';
 
 const UserProduct = ({ accountname }) => {
   const [productList, setProductList] = useState([]);
-  const url = 'https://api.mandarin.weniv.co.kr';
-  const { token, myTeam } = useContext(UserContext);
+  const myTeam = useSelector((state) => state.authReducer.user.myTeam);
 
   const getProductList = async () => {
     try {

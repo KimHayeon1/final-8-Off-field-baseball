@@ -1,9 +1,8 @@
-import React, { useContext } from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { UserContext } from '../../context/UserContext';
 
 const Form = ({ children, handleForm, selectedTeam }) => {
-  const { myTeam } = useContext(UserContext);
+  const myTeam = useSelector((state) => state.authReducer.user.myTeam);
 
   return (
     <StyledForm myTeam={selectedTeam || myTeam} onSubmit={handleForm || null}>

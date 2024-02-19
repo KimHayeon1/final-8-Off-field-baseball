@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ProfileHeader from './ProfileHeader/ProfileHeader';
 import ContentsLayout from '../../components/layout/ContentsLayout';
 import UserProduct from './UserProduct/UserProduct';
@@ -6,9 +6,9 @@ import UserPost from './UserPost/UserPost';
 import TopBasicNav from '../../components/common/TopNavBar/TopBasicNav';
 import TabNav from '../../components/common/TabNav';
 import Loading from '../../components/common/Loading';
-import { UserContext } from '../../context/UserContext';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { profileApi } from '../../api/profile';
+import { useSelector } from 'react-redux';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -19,7 +19,9 @@ const Profile = () => {
   const [team, setTeam] = useState('');
   const [intro, setIntro] = useState('');
 
-  const { accountname } = useContext(UserContext);
+  const accountname = useSelector(
+    (state) => state.authReducer.user.accountname
+  );
 
   // title 변경
   const setTitle = (username, accountname) => {
